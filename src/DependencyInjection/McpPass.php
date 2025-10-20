@@ -35,7 +35,12 @@ final class McpPass implements CompilerPassInterface
             return;
         }
 
-        $serviceLocatorRef = ServiceLocatorTagPass::register($container, $allMcpServices);
+        $serviceReferences = [];
+        foreach (array_keys($allMcpServices) as $serviceId) {
+            $serviceReferences[$serviceId] = new Reference($serviceId);
+        }
+
+        $serviceLocatorRef = ServiceLocatorTagPass::register($container, $serviceReferences);
 
         $container->getDefinition('mcp.server.builder')
             ->addMethodCall('setContainer', [$serviceLocatorRef]);
